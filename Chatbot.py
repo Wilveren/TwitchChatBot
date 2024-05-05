@@ -17,7 +17,7 @@ names = []
 counter = 0
 
 # Opens an external text file, reads it, and stores the information in a list
-with open('mega_lore.txt', 'r') as file:
+with open('lore.txt', 'r') as file:
     lore = file.read()
     lore = lore.splitlines()
 
