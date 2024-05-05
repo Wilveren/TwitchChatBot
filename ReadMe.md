@@ -12,6 +12,7 @@ Current Version: 0.2.1
 - Install the DadJoke and irc external libraries using pip: 
 `pip install irc`
 `pip install dadjokes`
+`pip install openai`
 - You will need an OAuth token for the account of your Twitch Chatbot. Refer to [Twitch Developer Documentation](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/) for info on how to get this.
 - You will need an API Key from your Open AI account if you plan to use the ChatGPT integration. You can find this in the API key page of your account.
 
