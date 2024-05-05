@@ -6,6 +6,7 @@ import threading
 import re
 import variables
 
+channel = variables.channel
 server = variables.server
 port = variables.port
 nickname = variables.nickname
@@ -16,17 +17,17 @@ names = []
 counter = 0
 
 # Opens an external text file, reads it, and stores the information in a list
-with open('lore.txt', 'r') as file:
+with open('mega_lore.txt', 'r') as file:
     lore = file.read()
     lore = lore.splitlines()
 
 # Function to send messages to the Twitch chat
 def send_message(message):
-    c.privmsg('#wilveren', message)
+    c.privmsg(f'#{channel}', message)
 
 # Function to handle the welcome message when the bot connects to your channel
 def on_welcome(connection, event):
-    connection.join('#wilveren')
+    connection.join(f'#{channel}')
     print("Connected to Twitch IRC server")
 
 # Function to handle errors
@@ -45,6 +46,7 @@ def on_pubmsg(connection, event):
     message = event.arguments[0].lower().strip()
     username = event.source.nick
     tags = event.tags
+
 
 
 # Function to check if the user has a specific role
@@ -67,11 +69,12 @@ def on_pubmsg(connection, event):
         send_message(response)
     elif message.startswith('!commands'):
         # Respond with a list of commands
-        send_message('Available commands: !hello, !herald [message], !dadjoke, !lore, !roll6, !roll20, !lurk')
+        send_message('Available commands: !hello, !herald [message], !dadjoke, !lore, !roll6, !roll20, !dcount, !lurk')
     elif message.startswith('!dadjoke'):
         # Respond with a dad joke
         dadjoke = Dadjoke()
-        send_message(dadjoke.joke.strip())
+        for line in dadjoke.joke.splitlines():
+            send_message(line)
     elif message.startswith('!roll6'):
         #Respond with a random number between 1 and 6
         send_message("The die came up "+str(random.randint(1, 6))+"!")
@@ -89,8 +92,9 @@ def on_pubmsg(connection, event):
     elif message.startswith('!herald') and Openai_client is not None:
          # Generate a response using ChatGPT
         message = re.sub("!herald\s?", "", message) 
-        response = generate_response(message)
-        send_message(response)
+        response = generate_response(message).splitlines()
+        for line in response:
+            send_message(line)
     elif message.startswith("!setdeath"):
         if has_role('broadcaster/1') or has_role('moderator/1'):
         # Manually set the death counter by extracting a number from the message sent by the broadcaster or a mod
@@ -106,20 +110,20 @@ def on_pubmsg(connection, event):
         if has_role('broadcaster/1') or has_role('moderator/1'):
             # Respond with a message acknowledging a death and increase death counter by 1, if sent by the broadcaster or a mod
             counter = counter + 1
-            response = f"Wilveren has been slain! Total Deaths: {counter}"
+            response = f"{channel} has been slain! Total Deaths: {counter}"
             send_message(response)
-    elif message.startswith('!deathcount'):
+    elif message.startswith('!dcount'):
         # Respond with the current death counter
         if counter == 0:
-            response = "So far, Wilveren hasn't died that I know of. Are we supposed to be keeping track of that? No one reported any deaths to me."
+            response = f"So far, {channel} hasn't died that I know of. Are we supposed to be keeping track of that? No one reported any deaths to me."
         if counter == 1:
-            response = "So far, Wilveren has died once."
+            response = f"So far, {channel} has died once."
         else:
-            response = f"So far, Wilveren has died {counter} times."
+            response = f"So far, {channel} has died {counter} times."
         send_message(response)
 
 
-def discord_message():
+def timed_message():
     global message_count
     while True:
         #Posts an invitation to join Discord every 10 minutes, but only if at least 5 other messages have been posted in chat since the last time this was posted
@@ -160,7 +164,7 @@ c = client.server().connect(server, port, nickname, password=f'oauth:{token}')
 c.cap('REQ', ':twitch.tv/tags')
 
 # Start the periodic message thread which will ensure timed messages are posted to the chat
-thread = threading.Thread(target=discord_message)
+thread = threading.Thread(target=timed_message)
 thread.daemon = True
 thread.start()
 
