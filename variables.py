@@ -1,6 +1,8 @@
 # External file for sensitive variables for the Twitch Chat Bot
 from openai import OpenAI
 
+# Your channel name.
+channel = 
 # Server to connect to. Likely will not change from "irc.chat.twitch.tv"
 server = 'irc.chat.twitch.tv'
 # Port to connect to and listen from
