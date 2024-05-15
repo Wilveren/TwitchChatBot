@@ -15,6 +15,7 @@ Openai_client = variables.Openai_client if variables.Openai_client else None
 message_count = 0
 names = []
 counter = 0
+user_context = {}
 
 # Opens an external text file, reads it, and stores the information in a list
 with open('lore.txt', 'r') as file:
@@ -48,7 +49,6 @@ def on_pubmsg(connection, event):
     tags = event.tags
 
 
-
 # Function to check if the user has a specific role
     def has_role(role):
         for tag in tags:
@@ -69,7 +69,7 @@ def on_pubmsg(connection, event):
         send_message(response)
     elif message.startswith('!commands'):
         # Respond with a list of commands
-        send_message('Available commands: !hello, !herald [message], !dadjoke, !lore, !roll6, !roll20, !dcount, !lurk')
+        send_message('Available commands: !hello, !herald [message], !dadjoke, !lore, !roll6, !roll20, !dcount, !lurk, !discord')
     elif message.startswith('!dadjoke'):
         # Respond with a dad joke
         dadjoke = Dadjoke()
@@ -92,7 +92,7 @@ def on_pubmsg(connection, event):
     elif message.startswith('!herald') and Openai_client is not None:
          # Generate a response using ChatGPT
         message = re.sub("!herald\s?", "", message) 
-        response = generate_response(message).splitlines()
+        response = generate_response(username, message).splitlines()
         for line in response:
             send_message(line)
     elif message.startswith("!setdeath"):
@@ -121,6 +121,9 @@ def on_pubmsg(connection, event):
         else:
             response = f"So far, {channel} has died {counter} times."
         send_message(response)
+    elif message.startswith('!discord'):
+        # Respond with a message containing discord invite
+        send_message("")
 
 
 def timed_message():
@@ -129,13 +132,19 @@ def timed_message():
         #Posts an invitation to join Discord every 10 minutes, but only if at least 5 other messages have been posted in chat since the last time this was posted
         if message_count > 5:
             message_count = 0
-            #send_message("Come to the Forever Rolling discord server, and join in our Jolly Cooperation! https://discord.gg/AjqUSfcd3r")
-            send_message("Wil and his wife Ariarosso are raising money to help a local, no-kill animal shelter. If goals are met, they'll eat Beanboozle Spicy Jelly Beans! Click here for info and to donate: https://www.paypal.com/pools/c/93QqD0wxIv")
+            send_message(" ")
         time.sleep(600)
 
 
-def generate_response(message):
+def generate_response(username, message):
     # Generate a response using ChatGPT
+
+    # Retrieve user's context
+    global user_context
+    context = user_context.get(username, [])
+
+    context.append(message)
+
     response = Openai_client.chat.completions.create(
         model="gpt-3.5-turbo-0125",
         n = 1,
@@ -143,16 +152,23 @@ def generate_response(message):
         { 
           "role": "system", 
           # Use this to help fine-tune the responses you receieve. You can establish the personality of the bot, any self-identifying info you want it to have, and message format.
-          "content": "You are the Sapphire Herald, a calm, friendly woman who is the assistant of Lorekeeper Wilveren. Specifically, you are a Fire Keeper as they are portrayed in the Dark Souls games. Please summarize to keep responses brief, and avoid using newlines."
+          "content": ""
         },
         {
             "role": "user",
             "content": message
         },
+        # Append user's previous interactions to the current message
+        *[
+            {"role": "user", "content": prev_message}
+            for prev_message in context
+        ]
     ],
-        timeout= 30,
-        max_tokens = 100
+        timeout= 30
     )
+    
+    # Update the user's context in the dictionary
+    user_context[username] = context
 
     return response.choices[0].message.content
 
