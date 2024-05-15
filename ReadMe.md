@@ -18,7 +18,7 @@ Current Version: 0.3.0
 
 ## Setup
 
-Fill in the values in `variables.py` with the relevant pieces of information. Bear in mine that your Twitch OAuth Token and OpenAI Key should be kept secret.
+Fill in the values in `variables.py` with the relevant pieces of information. Bear in mind that your Twitch OAuth Token and OpenAI Key should be kept secret.
 **Do not share these with anyone.**
 To use the `!lore` command, customize the `lore.txt` file with the text you would like this command to return. Each potential response should be on a single line, and 
 less than 500 characters. 
