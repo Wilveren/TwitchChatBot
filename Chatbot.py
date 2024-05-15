@@ -123,7 +123,7 @@ def on_pubmsg(connection, event):
         send_message(response)
     elif message.startswith('!discord'):
         # Respond with a message containing discord invite
-        send_message("")
+        send_message("We don't have a discord invite link yet - stay tuned for one!")
 
 
 def timed_message():
@@ -152,7 +152,7 @@ def generate_response(username, message):
         { 
           "role": "system", 
           # Use this to help fine-tune the responses you receieve. You can establish the personality of the bot, any self-identifying info you want it to have, and message format.
-          "content": ""
+          "content": "You are a Twitch chatbot, and should respond in a friendly, informative way. Summarize to keep responses brief."
         },
         {
             "role": "user",
