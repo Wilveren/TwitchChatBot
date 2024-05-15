@@ -36,6 +36,41 @@ def timed_message():
         time.sleep(600) # Amount of time in seconds to wait before posting again
 ```
 
+If using ChatGPT integration, fill in the `content` under `"role": "system",` in `generate_response` with any background information you want the bot to have, such as
+its temperment.
+
+```python
+def generate_response(username, message):
+    # Generate a response using ChatGPT
+
+    # Retrieve user's context
+    global user_context
+    context = user_context.get(username, [])
+
+    context.append(message)
+
+    response = Openai_client.chat.completions.create(
+        model="gpt-3.5-turbo-0125",
+        n = 1,
+        messages=[
+        { 
+          "role": "system", 
+          # Use this to help fine-tune the responses you receieve. You can establish the personality of the bot, any self-identifying info you want it to have, and message format.
+          "content": "You are a Twitch chatbot, and should respond in a friendly, informative way. Summarize to keep responses brief."
+        },
+...
+```
+
+For the `!discord` command, fill in the `send_message` function call of this command with the link to your discord, along with any message you want posted.
+
+```python
+...
+    elif message.startswith('!discord'):
+        # Respond with a message containing discord invite
+        send_message(" ") # your message and discord invite link go inside these quotes.
+...
+```
+
 To activate the bot, run the `Chatbot.py` file locally from VScode or any other editor that supports python. The bot will immediately being listening for messages in your
 Twitch channel, response to commands, and begin posting your timed message according to your settings.
 
