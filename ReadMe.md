@@ -3,7 +3,7 @@
 A Chat Bot for Twitch built in Python. Contains functionality to respond to various commands, including posting random lines from an external text file, 
 and optionally generating responses via ChatGPT.
 
-Current Version: 0.2.1
+Current Version: 0.3.0
 
 ## Requirements
 
