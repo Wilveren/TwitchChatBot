@@ -72,7 +72,7 @@ For the `!discord` command, fill in the `send_message` function call of this com
 ```
 
 To activate the bot, run the `Chatbot.py` file locally from VScode or any other editor that supports python. The bot will immediately being listening for messages in your
-Twitch channel, response to commands, and begin posting your timed message according to your settings.
+Twitch channel, respond to commands, and begin posting your timed message according to your settings.
 
 ## Commands
 
@@ -87,3 +87,4 @@ Twitch channel, response to commands, and begin posting your timed message accor
 - !setdeath [number]: Manually sets the death counter. Only accessible by the broadcaster or moderators.
 - !death: Increases the death counter by 1 and acknowledges a death. Only accessible by the broadcaster or moderators.
 - !dcount: Displays the current death counter.
+- !discord: Posts an invitation to a given discord channel, with accompanying message.
