@@ -1,5 +1,5 @@
-from lib.irc import client
-from lib.dadjokes import Dadjoke
+import irc.client
+from dadjokes import Dadjoke
 import random
 import time
 import threading
@@ -167,7 +167,7 @@ def generate_response(message):
     return response.choices[0].message.content
 
 # Connect to the Twitch IRC server and request the needed capabilities to recognize a user's roles
-client = client.Reactor()
+client = irc.client.Reactor()
 client.add_global_handler('welcome', on_welcome)
 client.add_global_handler('pubmsg', on_pubmsg)
 c = client.server().connect(server, port, nickname, password=f'oauth:{token}')
